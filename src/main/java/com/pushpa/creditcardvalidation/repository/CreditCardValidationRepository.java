@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface CreditCardValidationRepository extends JpaRepository<CreditCard, Integer> {
     public List<CreditCard> findByCardType(String cardType);
+
+    public CreditCard findByCreditCardNumber(String creditCardNumber);
 }

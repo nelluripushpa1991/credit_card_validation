@@ -1,9 +1,12 @@
 package com.pushpa.creditcardvalidation.service;
 
 import com.pushpa.creditcardvalidation.entity.CreditCard;
-import com.pushpa.creditcardvalidation.model.Constants;
+import com.pushpa.creditcardvalidation.exception.CreditCardAlreadyExistsException;
+import com.pushpa.creditcardvalidation.exception.NoSuchCreditCardExistsException;
 import com.pushpa.creditcardvalidation.model.CreditCardResponseData;
 import com.pushpa.creditcardvalidation.repository.CreditCardValidationRepository;
+import com.pushpa.creditcardvalidation.util.CommonLogics;
+import com.pushpa.creditcardvalidation.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,32 +21,25 @@ public class CreditCardValidationServiceImpl implements CreditCardValidationServ
     @Override
     public CreditCardResponseData saveCreditCard(CreditCard creditCard) {
         CreditCardResponseData creditCardResponseData = new CreditCardResponseData();
-        creditCardResponseData.setCardType(Constants.INVALID_CARD_TYPE);
-        creditCardResponseData.setMessage(Constants.INVALID);
         if (creditCard != null) {
-            int cardNumberLength = creditCard.getCreditCardNumber().length();
-            if (cardNumberLength >= Constants.CREDIT_CARD_MIN_LENGTH && cardNumberLength <= Constants.CREDIT_CARD_MAX_LENGTH) {
-                creditCardResponseData.setMessage(Constants.VALID);
-                if (creditCard.getCreditCardNumber().trim().startsWith(Constants.VISA_SERIES)) {
-                    creditCardResponseData.setCardType(Constants.VISA);
-                } else if (creditCard.getCreditCardNumber().trim().startsWith(Constants.MASTER_CARD_SERIES)) {
-                   creditCardResponseData.setCardType(Constants.MASTER_CARD);
-                } else if (creditCard.getCreditCardNumber().trim().startsWith(Constants.AMERICAN_EXPRESS_SERIES)) {
-                    creditCardResponseData.setCardType(Constants.AMERICAN_EXPRESS);
-                } else {
-                    creditCardResponseData.setMessage(Constants.INVALID);
-                    creditCardResponseData.setCardType(creditCard.getCardType());
-                }
+            CreditCard saveCreditCardResponse = creditCardValidationRepository.findByCreditCardNumber(creditCard.getCreditCardNumber());
+            if (saveCreditCardResponse == null) {
+                creditCardResponseData = CommonLogics.getResponseData(creditCard);
+                creditCard.setCardType(creditCardResponseData.getCardType());
+                creditCardValidationRepository.save(creditCard);
+            } else {
+                creditCardResponseData.setCardType(creditCard.getCardType());
+                creditCardResponseData.setMessage("Invalid Input");
+                throw new CreditCardAlreadyExistsException("Credit Card Already Exists");
             }
         }
-        creditCardValidationRepository.save(creditCard);
         return creditCardResponseData;
     }
 
     @Override
     public CreditCard getCreditCard(int id) {
         Optional<CreditCard> creditCard = creditCardValidationRepository.findById(id);
-        return creditCard.orElse(null);
+        return creditCard.orElseThrow(() -> new NoSuchCreditCardExistsException("NO CREDIT CARD PRESENT WITH ID = " + id));
     }
 
     @Override

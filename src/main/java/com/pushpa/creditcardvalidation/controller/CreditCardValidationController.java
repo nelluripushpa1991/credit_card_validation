@@ -1,9 +1,9 @@
 package com.pushpa.creditcardvalidation.controller;
 
 import com.pushpa.creditcardvalidation.entity.CreditCard;
-import com.pushpa.creditcardvalidation.model.Constants;
 import com.pushpa.creditcardvalidation.model.CreditCardResponseData;
 import com.pushpa.creditcardvalidation.service.CreditCardValidationService;
+import com.pushpa.creditcardvalidation.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +35,7 @@ public class CreditCardValidationController {
                 return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(creditCardData);
             }
         } else {
+            creditCardData = new CreditCardResponseData();
             creditCardData.setCardType(cardData.getCardType());
             creditCardData.setMessage("Internal Server Error");
             return ResponseEntity.status(HttpStatusCode.valueOf(500)).body(creditCardData);
@@ -48,7 +49,8 @@ public class CreditCardValidationController {
         if (creditCard != null) {
             return ResponseEntity.ok().body(creditCard);
         } else {
-            return ResponseEntity.status(HttpStatusCode.valueOf(500)).body(null);
+            creditCard = new CreditCard();
+            return ResponseEntity.status(HttpStatusCode.valueOf(500)).body(creditCard);
         }
 
 

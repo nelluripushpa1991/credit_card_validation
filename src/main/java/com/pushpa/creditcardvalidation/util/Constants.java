@@ -1,4 +1,4 @@
-package com.pushpa.creditcardvalidation.model;
+package com.pushpa.creditcardvalidation.util;
 
 public final class Constants {
     public static final String VISA = "VISA";
@@ -6,6 +6,7 @@ public final class Constants {
     public static final String AMERICAN_EXPRESS = "AMERICAN EXPRESS";
     public static final String VALID = "VALID";
     public static final String INVALID = "INVALID";
+    public static final String INVALID_INPUT = "INVALID INPUT";
     public static final String VISA_SERIES = "4";
     public static final String MASTER_CARD_SERIES = "5";
     public static final String AMERICAN_EXPRESS_SERIES = "37";
