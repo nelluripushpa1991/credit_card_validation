@@ -11,4 +11,7 @@ public interface CreditCardValidationRepository extends JpaRepository<CreditCard
     public List<CreditCard> findByCardType(String cardType);
 
     public CreditCard findByCreditCardNumber(String creditCardNumber);
+
+    public void deleteByCardType(String cardType);
+
 }
