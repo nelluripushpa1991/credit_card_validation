@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/card/credit")
-@CrossOrigin(origins = "http://localhost:4200")
 public class CreditCardValidationController {
     Logger logger = LoggerFactory.getLogger(CreditCardValidationController.class);
 

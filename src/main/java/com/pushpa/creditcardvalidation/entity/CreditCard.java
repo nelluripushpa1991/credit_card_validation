@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -14,6 +15,7 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CreditCard {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,5 +29,8 @@ public class CreditCard {
     @NotEmpty
     private String expiryDate;
     private String cardType;
+
+    public CreditCard(String creditCardNumber, int cvv, String expiryDate, String cardType) {
+    }
 
 }
