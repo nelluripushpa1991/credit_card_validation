@@ -9,6 +9,7 @@ public class CommonLogics {
         int cardNumberLength = creditCard.getCreditCardNumber().length();
         String creditCardNumber = creditCard.getCreditCardNumber().trim();
         if (cardNumberLength >= Constants.CREDIT_CARD_MIN_LENGTH && cardNumberLength <= Constants.CREDIT_CARD_MAX_LENGTH) {
+            // getting cardType based number series
             creditCardResponseData.setCardType(CommonLogics.getCardType(creditCard.getCreditCardNumber()));
             if (creditCardResponseData.getCardType().equals(Constants.INVALID))
                 creditCardResponseData.setMessage(Constants.INVALID_INPUT);

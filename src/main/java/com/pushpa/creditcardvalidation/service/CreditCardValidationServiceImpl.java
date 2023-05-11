@@ -28,11 +28,13 @@ public class CreditCardValidationServiceImpl implements CreditCardValidationServ
             if (creditCard != null) {
                 CreditCard saveCreditCardResponse = creditCardValidationRepository.findByCreditCardNumber(creditCard.getCreditCardNumber());
                 if (saveCreditCardResponse == null) {
+                    // getting response based on given conditions
                     creditCardResponseData = CommonLogics.getResponseData(creditCard);
                     creditCard.setCardType(creditCardResponseData.getCardType());
                     creditCardValidationRepository.save(creditCard);
                     return new ResponseEntity<>(creditCardResponseData, HttpStatus.CREATED);
                 } else {
+                    // not allowing to save same card again
                     creditCardResponseData.setCardType(creditCard.getCardType());
                     creditCardResponseData.setMessage("Invalid Input");
                     return new ResponseEntity<>(creditCardResponseData, HttpStatus.BAD_REQUEST);
