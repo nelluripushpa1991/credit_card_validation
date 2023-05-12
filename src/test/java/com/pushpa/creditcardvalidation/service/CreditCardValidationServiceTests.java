@@ -1,7 +1,7 @@
 package com.pushpa.creditcardvalidation.service;
 
 import com.pushpa.creditcardvalidation.entity.CreditCard;
-import com.pushpa.creditcardvalidation.model.CreditCardResponseData;
+import com.pushpa.creditcardvalidation.exception.NoSuchCreditCardExistsException;
 import com.pushpa.creditcardvalidation.repository.CreditCardValidationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +11,8 @@ import static org.mockito.BDDMockito.given;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,27 +25,16 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+
 public class CreditCardValidationServiceTests {
     @Mock
     private CreditCardValidationRepository creditCardValidationRepository;
-
     @InjectMocks
     private CreditCardValidationServiceImpl creditCardValidationService;
-
     private CreditCard creditCard;
-
-    private CreditCardResponseData creditCardResponseData;
-
-    private ResponseEntity<CreditCard> creditCardResponseEntity;
-
-    private ResponseEntity<CreditCardResponseData> creditCardResponseDataResponseEntity;
-
     private List<CreditCard> listResponse ;
-
     private Optional<CreditCard> optionalCreditCard ;
-
-    private ResponseEntity<HttpStatus> httpStatusResponseEntity;
-
     @BeforeEach
     public void setup(){
         creditCard = CreditCard.builder()
@@ -64,7 +55,7 @@ public class CreditCardValidationServiceTests {
         when(creditCardValidationRepository.save(creditCard)).thenReturn(creditCard);
 
         // Call the CreditCardValidationService's saveCreditCard method and verify the result
-        CreditCardResponseData savedCreditCardResponseData = creditCardValidationService.saveCreditCard(creditCard).getBody();
+        CreditCard savedCreditCardResponseData = creditCardValidationService.saveCreditCard(creditCard);
         assertThat(savedCreditCardResponseData.getCardType().equals(creditCard.getCardType()));
     }
 
@@ -76,8 +67,8 @@ public class CreditCardValidationServiceTests {
         when(creditCardValidationRepository.save(creditCard)).thenReturn(null);
 
         // Call the CreditCardValidationService's saveCreditCard method and verify the result
-        CreditCardResponseData savedCreditCardResponseData = creditCardValidationService.saveCreditCard(creditCard).getBody();
-        assertThat(savedCreditCardResponseData.getCardType().equals(creditCard.getCardType()));
+        CreditCard savedCreditCardResponseData = creditCardValidationService.saveCreditCard(creditCard);
+        assertThat(savedCreditCardResponseData).isNull();
     }
 
     // JUnit test for getById method
@@ -90,10 +81,10 @@ public class CreditCardValidationServiceTests {
                 .expiryDate("05/2023")
                 .cardType("AMERICAN EXPRESS").build();
         listResponse.add(creditCard);
-        ResponseEntity<CreditCardResponseData> savedCreditCardResponseData = (ResponseEntity<CreditCardResponseData>) creditCardValidationService.saveCreditCard(creditCard);
+        CreditCard savedCreditCardResponseData = (CreditCard) creditCardValidationService.saveCreditCard(creditCard);
 
         // given
-//        given(creditCardValidationRepository.findById(5)).willReturn(optionalCreditCard);
+        given(creditCardValidationRepository.findById(5)).willReturn(Optional.ofNullable(savedCreditCardResponseData));
 
         // when
         ResponseEntity<HttpStatus> statusResponseEntitySuccess = new ResponseEntity<>(HttpStatus.OK);
@@ -120,13 +111,12 @@ public class CreditCardValidationServiceTests {
         given(creditCardValidationRepository.findByCardType("VISA")).willReturn(listResponse);
 
         // when
-        ResponseEntity<List<CreditCard>> savedCreditCard = (ResponseEntity<List<CreditCard>>) creditCardValidationService.getAllCreditCardsByCardType(creditCard.getCardType());
+        List<CreditCard> savedCreditCard = (List<CreditCard>) creditCardValidationService.getAllCreditCardsByCardType(creditCard.getCardType());
 
 
         // then
-        assertThat(savedCreditCard.getStatusCode().value()).isEqualTo(200);
-        assertThat(savedCreditCard.getBody().size()).isEqualTo(2);
-        assertThat(savedCreditCard.getBody()).isNotNull();
+        assertThat(savedCreditCard).isNotNull();
+        assertThat(savedCreditCard.size()).isEqualTo(2);
 
     }
 
@@ -145,28 +135,30 @@ public class CreditCardValidationServiceTests {
         given(creditCardValidationRepository.findAll()).willReturn(listResponse);
 
         // when
-        ResponseEntity<List<CreditCard>> savedCreditCard = (ResponseEntity<List<CreditCard>>) creditCardValidationService.getAllCreditCards();
+        List<CreditCard> savedCreditCard = (List<CreditCard>) creditCardValidationService.getAllCreditCards();
 
         // then
-        assertThat(savedCreditCard.getStatusCode().value()).isEqualTo(200);
-        assertThat(savedCreditCard.getBody().size()).isEqualTo(2);
-        assertThat(savedCreditCard.getBody()).isNotNull();
+        assertThat(savedCreditCard).isNotNull();
+        assertThat(savedCreditCard.size()).isEqualTo(2);
 
     }
 
     // JUnit test for getAllCreditCards method with negative scenario
     @DisplayName("JUnit test for getAllCreditCards method negative scenario")
     @Test
-    public void givenId_whenGetAllCreditCardsNS_thenReturnAllCreditCardsNSObjects() {
+    public void givenId_whenGetAllCreditCardsNS_thenReturnAllCreditCardsNSObjects() throws NoSuchCreditCardExistsException {
+        System.out.println("listResponse : "+listResponse.size());
         listResponse.clear();
+        System.out.println("after listResponse : "+listResponse.size());
         // given
         given(creditCardValidationRepository.findAll()).willReturn(listResponse);
         // when
-        ResponseEntity<List<CreditCard>> savedCreditCard = (ResponseEntity<List<CreditCard>>) creditCardValidationService.getAllCreditCards();
+        List<CreditCard> savedCreditCard = (List<CreditCard>) creditCardValidationService.getAllCreditCards();
+        System.out.println("save card "+savedCreditCard);
 
         // then
-        assertThat(savedCreditCard.getHeaders().isEmpty());
-        assertThat(savedCreditCard.getHeaders().size()).isEqualTo(0);
+        assertThat(savedCreditCard).isNotNull();
+        assertThat(savedCreditCard.size()).isEqualTo(0);
 
     }
 

@@ -1,25 +1,18 @@
 package com.pushpa.creditcardvalidation.util;
 
-import com.pushpa.creditcardvalidation.entity.CreditCard;
-import com.pushpa.creditcardvalidation.model.CreditCardResponseData;
 
 public class CommonLogics {
-    public static CreditCardResponseData getResponseData(CreditCard creditCard) {
-        CreditCardResponseData creditCardResponseData = new CreditCardResponseData();
-        int cardNumberLength = creditCard.getCreditCardNumber().length();
-        String creditCardNumber = creditCard.getCreditCardNumber().trim();
-        if (cardNumberLength >= Constants.CREDIT_CARD_MIN_LENGTH && cardNumberLength <= Constants.CREDIT_CARD_MAX_LENGTH) {
-            // getting cardType based number series
-            creditCardResponseData.setCardType(CommonLogics.getCardType(creditCard.getCreditCardNumber()));
-            if (creditCardResponseData.getCardType().equals(Constants.INVALID))
-                creditCardResponseData.setMessage(Constants.INVALID_INPUT);
-            else
-                creditCardResponseData.setMessage(Constants.VALID);
-        } else {
-            creditCardResponseData.setCardType(CommonLogics.getCardType(creditCard.getCreditCardNumber()));
-            creditCardResponseData.setMessage(Constants.INVALID);
+
+    public static boolean validateCreditCard(String creditCardNumber, String cardType) {
+        boolean isValid = false;
+        if (creditCardNumber != null && !creditCardNumber.isEmpty()) {
+            int cardNumberLength = creditCardNumber.trim().length();
+            if (cardNumberLength >= Constants.CREDIT_CARD_MIN_LENGTH && cardNumberLength <= Constants.CREDIT_CARD_MAX_LENGTH) {
+                if (!Constants.INVALID.equals(cardType))
+                    isValid = true;
+            }
         }
-        return creditCardResponseData;
+        return isValid;
     }
 
     public static String getCardType(String creditCardNumber) {

@@ -6,6 +6,7 @@ public class NoSuchCreditCardExistsException extends RuntimeException{
     public NoSuchCreditCardExistsException() {
     }
     public NoSuchCreditCardExistsException(String exceptionMessage) {
+        super(exceptionMessage);
         this.exceptionMessage = exceptionMessage;
     }
 }

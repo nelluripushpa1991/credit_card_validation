@@ -12,7 +12,11 @@ public final class Constants {
     public static final String AMERICAN_EXPRESS_SERIES = "37";
     public static final int CREDIT_CARD_MIN_LENGTH = 13;
     public static final int CREDIT_CARD_MAX_LENGTH = 16;
-    public static final String INVALID_CARD_TYPE = "";
+    public static final String INVALID_CARD_TYPE = "EMPTY";
+    public static final String CONFLICT_MESSAGE = "Credit Card Already Exists";
+    public static final String BAD_REQUEST_MESSAGE = "Invalid Card Type";
+    public static final String DATA_NOT_EXIST_MESSAGE = "No Such Credit Card Exists";
+
 
 
 

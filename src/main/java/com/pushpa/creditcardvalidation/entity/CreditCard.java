@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Data
@@ -28,6 +27,18 @@ public class CreditCard {
     private int cvv;
     @NotEmpty
     private String expiryDate;
+
+    @Override
+    public String toString() {
+        return "CreditCard{" +
+                "id=" + id +
+                ", creditCardNumber='" + creditCardNumber + '\'' +
+                ", cvv=" + cvv +
+                ", expiryDate='" + expiryDate + '\'' +
+                ", cardType='" + cardType + '\'' +
+                '}';
+    }
+
     private String cardType;
 
     public CreditCard(String creditCardNumber, int cvv, String expiryDate, String cardType) {

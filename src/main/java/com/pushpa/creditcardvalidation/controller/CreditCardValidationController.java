@@ -1,14 +1,11 @@
 package com.pushpa.creditcardvalidation.controller;
 
 import com.pushpa.creditcardvalidation.entity.CreditCard;
-import com.pushpa.creditcardvalidation.model.CreditCardResponseData;
 import com.pushpa.creditcardvalidation.service.CreditCardValidationService;
-import com.pushpa.creditcardvalidation.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,38 +21,41 @@ public class CreditCardValidationController {
     private CreditCardValidationService creditCardValidationService;
 
     @PostMapping
-    public ResponseEntity<CreditCardResponseData> saveCreditCard(@RequestBody CreditCard cardData) {
-        logger.info("Request Date : "+cardData);
-        return creditCardValidationService.saveCreditCard(cardData);
+    public ResponseEntity<CreditCard> saveCreditCard(@RequestBody CreditCard cardData) {
+        CreditCard savedCard = creditCardValidationService.saveCreditCard(cardData);
+        return new ResponseEntity<>(savedCard, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<CreditCard> getCreditCard(@PathVariable int id) {
-        return creditCardValidationService.getCreditCard(id);
+        CreditCard getCard = creditCardValidationService.getCreditCard(id);
+        return new ResponseEntity<>(getCard, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<CreditCard>> getAllCreditCards() {
-        return creditCardValidationService.getAllCreditCards();
+        List<CreditCard> getCardList = creditCardValidationService.getAllCreditCards();
+        return new ResponseEntity<>(getCardList, HttpStatus.OK);
     }
 
     @GetMapping(path = "/type/{cardType}")
     public ResponseEntity<List<CreditCard>> getAllCreditCardsByCardType(@PathVariable String cardType) {
-        return creditCardValidationService.getAllCreditCardsByCardType(cardType);
+        List<CreditCard> getCardList = creditCardValidationService.getAllCreditCardsByCardType(cardType);
+        return new ResponseEntity<>(getCardList, HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<HttpStatus> deleteCreditCard(@PathVariable int id) {
-        return creditCardValidationService.deleteCreditCard(id);
+    public void deleteCreditCard(@PathVariable int id) {
+        creditCardValidationService.deleteCreditCard(id);
     }
 
     @DeleteMapping
-    public ResponseEntity<HttpStatus> deleteAllCreditCards() {
-        return creditCardValidationService.deleteAllCreditCards();
+    public void deleteAllCreditCards() {
+        creditCardValidationService.deleteAllCreditCards();
     }
 
     @DeleteMapping(path = "/type/{cardType}")
-    public ResponseEntity<HttpStatus> deleteCreditCardByCardType(@PathVariable String cardType) {
-        return creditCardValidationService.deleteCreditCardByCardType(cardType);
+    public void deleteCreditCardByCardType(@PathVariable String cardType) {
+        creditCardValidationService.deleteCreditCardByCardType(cardType);
     }
 }
